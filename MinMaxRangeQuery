@@ -7,14 +7,20 @@
 #include<cstdio>
 #include<cmath>
 
-#define INF 999999999
-
 using namespace std;
 
-int min(int a, int b){
-    if (a < b)
-        return a;
-    return b;
+int typeSegTree = 0, INF;
+int compare(int a, int b){
+    if (typeSegTree == 1){
+        if (a < b)
+            return a;
+        return b;
+    }
+    else{
+        if (a > b)
+            return a;
+        return b;
+    }
 }
 
 void buildSegTree(int input[], int segTree[], int low, int high, int pos){
@@ -27,39 +33,52 @@ void buildSegTree(int input[], int segTree[], int low, int high, int pos){
     buildSegTree(input, segTree, low, mid, pos * 2 + 1);
     buildSegTree(input, segTree, mid + 1, high, pos * 2 + 2);
 
-    segTree[pos] = min(segTree[pos * 2 + 1], segTree[pos * 2 + 2]);
+    segTree[pos] = compare(segTree[pos * 2 + 1], segTree[pos * 2 + 2]);
 
 }
+
 
 int rangeMinQuery(int segTree[], int qlow, int qhigh, int low, int high, int pos){
     if (qlow <= low&&qhigh >= high)   // Total Overlap condition
-        return segTree[pos];   
+        return segTree[pos];
     if (qlow > high || qhigh < low)   // No Overlap condition
         return INF;
     int mid = (low + high) / 2;
-    return min(rangeMinQuery(segTree, qlow, qhigh, low, mid, pos * 2 + 1), rangeMinQuery(segTree, qlow, qhigh, mid + 1, high, pos * 2 + 2));
+    return compare(rangeMinQuery(segTree, qlow, qhigh, low, mid, pos * 2 + 1), rangeMinQuery(segTree, qlow, qhigh, mid + 1, high, pos * 2 + 2));
 }
+
 
 int main(){
 
     int input[1000];
     int segTree[1000];
     int n;
+    cout << "enter type of range query(press 1 for min/2 for max): ";
+    cin >> typeSegTree;
+    if (typeSegTree != 1 && typeSegTree != 2){
+        cout << "Press 1 for min/2 for max range query: ";
+        cin >> typeSegTree;
+    }
+    if (typeSegTree == 1)
+        INF = INT_MAX;  // maximum value say infinity
+    else
+        INF = INT_MIN;  // minimum value say negative infinity
     cout << "Enter the size of input: ";
     cin >> n;
-    cout << "Enter all input values: ";
+    cout << "Enter all input values:"<<endl;
     for (int i = 0; i < n; i++)
         cin >> input[i];
-    for (int i = 0; i < 4*n; i++)
+    for (int i = 0; i < 4 * n; i++)
         segTree[i] = INF;
     buildSegTree(input, segTree, 0, n - 1, 0);
     int qlow, qhigh;
     while (1){
+
         cout << "Enter the range for query...\nlow: ";
         cin >> qlow;
         cout << "high: ";
         cin >> qhigh;
-        cout << "Minimum value in range: ("<<qlow<<", "<<qhigh<<") is: "<<rangeMinQuery(segTree, qlow, qhigh, 0, n - 1, 0) << endl;
+        cout << "Respective value in range: (" << qlow << ", " << qhigh << ") is: " << rangeMinQuery(segTree, qlow, qhigh, 0, n - 1, 0) << endl;
     }
     return 0;
 }
