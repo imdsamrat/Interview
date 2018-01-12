@@ -9,7 +9,8 @@
 
 using namespace std;
 
-int typeSegTree = 0, INF;
+int typeSegTree = 0, INF;   // global variables
+
 int compare(int a, int b){
     if (typeSegTree == 1){
         if (a < b)
@@ -24,7 +25,6 @@ int compare(int a, int b){
 }
 
 void buildSegTree(int input[], int segTree[], int low, int high, int pos){
-
     if (low == high){
         segTree[pos] = input[low];
         return;
@@ -32,24 +32,20 @@ void buildSegTree(int input[], int segTree[], int low, int high, int pos){
     int mid = (low + high) / 2;
     buildSegTree(input, segTree, low, mid, pos * 2 + 1);
     buildSegTree(input, segTree, mid + 1, high, pos * 2 + 2);
-
     segTree[pos] = compare(segTree[pos * 2 + 1], segTree[pos * 2 + 2]);
-
 }
 
-
 int rangeMinQuery(int segTree[], int qlow, int qhigh, int low, int high, int pos){
-    if (qlow <= low&&qhigh >= high)   // Total Overlap condition
+    if (qlow <= low&&qhigh >= high)   // total overlap condition
         return segTree[pos];
-    if (qlow > high || qhigh < low)   // No Overlap condition
+    if (qlow > high || qhigh < low)   // no overlap condition
         return INF;
+                                      // partial overlap
     int mid = (low + high) / 2;
     return compare(rangeMinQuery(segTree, qlow, qhigh, low, mid, pos * 2 + 1), rangeMinQuery(segTree, qlow, qhigh, mid + 1, high, pos * 2 + 2));
 }
 
-
 int main(){
-
     int input[1000];
     int segTree[1000];
     int n;
@@ -73,7 +69,6 @@ int main(){
     buildSegTree(input, segTree, 0, n - 1, 0);
     int qlow, qhigh;
     while (1){
-
         cout << "Enter the range for query...\nlow: ";
         cin >> qlow;
         cout << "high: ";
