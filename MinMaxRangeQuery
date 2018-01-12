@@ -3,7 +3,6 @@
  * cpp code solution to query the minimum value in a certain range out of given input values.
  */
 
-
 #include<iostream>
 #include<cstdio>
 #include<cmath>
